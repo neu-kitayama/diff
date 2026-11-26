@@ -428,16 +428,18 @@
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Courier New", monospace;
     font-size: 0.88rem;
     line-height: 1.65em;
-    min-width: max-content;
-  }
-
-  .diff-grid.side { grid-template-columns: 52px 1fr 52px 1fr; }
-  .diff-grid.unified { grid-template-columns: 46px 46px 22px 1fr; }
-
-  .diff-grid > div {
-    padding: 1px 10px;
     white-space: pre-wrap;
     word-break: break-word;
+  }
+
+  /* Side view mirrors the input panel above: [A: 行番号 + 本文] [96px seam] [B: 行番号 + 本文] */
+  .diff-grid.side { grid-template-columns: 52px minmax(0, 1fr) 96px 52px minmax(0, 1fr); }
+  .diff-grid.unified { grid-template-columns: 46px 46px 22px minmax(0, 1fr); }
+
+  .diff-grid .ln,
+  .diff-grid .cell,
+  .diff-grid .marker {
+    padding: 1px 10px;
   }
 
   .ln {
@@ -549,8 +551,8 @@
     .input-panel { grid-template-columns: 1fr; }
     .seam { width: 100%; padding: 14px 0; }
     .seam::before { display: none; }
-    .diff-grid.side { grid-template-columns: 40px 1fr; }
-    .diff-grid.side .col-b { display: none; }
+    .diff-grid.side { grid-template-columns: 40px minmax(0, 1fr); }
+    .diff-grid.side .gap { display: none; }
   }
 </style>
 </head>
@@ -905,21 +907,25 @@
       if (r.kind === 'mod') {
         html += '<div class="ln row-mod-del">' + (r.aNum ?? '') + '</div>';
         html += '<div class="cell row-mod-del">' + r.aHtml + '</div>';
+        html += '<div class="gap"></div>';
         html += '<div class="ln row-mod-add">' + (r.bNum ?? '') + '</div>';
         html += '<div class="cell row-mod-add">' + r.bHtml + '</div>';
       } else if (r.kind === 'del') {
         html += '<div class="ln ' + rowClass + '">' + r.aNum + '</div>';
         html += '<div class="cell ' + rowClass + '">' + r.aHtml + '</div>';
+        html += '<div class="gap"></div>';
         html += '<div class="ln blank-b"></div>';
         html += '<div class="cell blank-b"></div>';
       } else if (r.kind === 'add') {
         html += '<div class="ln blank-a"></div>';
         html += '<div class="cell blank-a"></div>';
+        html += '<div class="gap"></div>';
         html += '<div class="ln ' + rowClass + '">' + r.bNum + '</div>';
         html += '<div class="cell ' + rowClass + '">' + r.bHtml + '</div>';
       } else {
         html += '<div class="ln ' + rowClass + '">' + r.aNum + '</div>';
         html += '<div class="cell ' + rowClass + '">' + r.aHtml + '</div>';
+        html += '<div class="gap"></div>';
         html += '<div class="ln ' + rowClass + '">' + r.bNum + '</div>';
         html += '<div class="cell ' + rowClass + '">' + r.bHtml + '</div>';
       }
